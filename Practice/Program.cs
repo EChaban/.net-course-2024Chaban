@@ -13,11 +13,13 @@ namespace Practice
 
             // Пример метода обновляющего сущность валюты 
             Currency currency = new Currency("USD", '$');
+            Console.WriteLine("Initial currency: " + currency);
             UpdateCurrency(ref currency, "EUR", '€'); // Изменяем значение валюты на EUR
             Console.WriteLine($"Updated Currency: {currency}");
 
             // Пример обновления контракта сотрудника
             Employee employee = new Employee("Eugene", "Chaban", new DateTime(1994, 07, 20), "Developer", 1000, "Work hardest");
+            Console.WriteLine($"Updated employee contract: {employee.Contract}{currency.Symbol}");
             UpdateEmployeeContract(employee);
             Console.WriteLine($"Updated Employee Contract: {employee.Contract}{currency.Symbol}");
 
