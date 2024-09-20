@@ -9,9 +9,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{BCDD88E8-992E-4798-A26E-12FB1F55E5A5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{9D0A1EEB-114E-4728-8E85-DD709F768576}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankSystem.Domain", "BankSystem.Domain\BankSystem.Domain.csproj", "{5DD2D8E8-7326-4E49-A7EA-AA7E79330035}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practice", "Practice\Practice.csproj", "{2ECF6128-5FB9-4CDA-8F04-6D73E9073B05}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5DD2D8E8-7326-4E49-A7EA-AA7E79330035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DD2D8E8-7326-4E49-A7EA-AA7E79330035}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DD2D8E8-7326-4E49-A7EA-AA7E79330035}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DD2D8E8-7326-4E49-A7EA-AA7E79330035}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ECF6128-5FB9-4CDA-8F04-6D73E9073B05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ECF6128-5FB9-4CDA-8F04-6D73E9073B05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ECF6128-5FB9-4CDA-8F04-6D73E9073B05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ECF6128-5FB9-4CDA-8F04-6D73E9073B05}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5DD2D8E8-7326-4E49-A7EA-AA7E79330035} = {9D0A1EEB-114E-4728-8E85-DD709F768576}
+		{2ECF6128-5FB9-4CDA-8F04-6D73E9073B05} = {BCDD88E8-992E-4798-A26E-12FB1F55E5A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0097849E-39FC-49C1-B05C-98D472240A58}
