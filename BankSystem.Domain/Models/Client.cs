@@ -12,11 +12,14 @@ namespace BankSystem.Domain.Models
         public decimal AccountBalance { get; set; }
         public string ContractInfo { get; set; }
 
-        public Client(string firstName, string lastName, DateTime dateOfBirth, int clientID, decimal accountBalance, string contractInfo)
+        public string PhonNumber { get; set; }
+
+        public Client(string firstName, string lastName, DateTime dateOfBirth, int clientID, decimal accountBalance, string phoneNumber, string contractInfo)
             : base(firstName, lastName, dateOfBirth)
         {
             ClientId = clientID;
             AccountBalance = accountBalance;
+            PhonNumber = phoneNumber;
             ContractInfo = contractInfo;
         }
 

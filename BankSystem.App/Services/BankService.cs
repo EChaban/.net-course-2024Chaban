@@ -24,10 +24,10 @@ namespace BankSystem.App.Services
             else throw new ArgumentException("Владелец должен быть сотрудником банка.");
         }
 
-        public static Employee ConvertClientToEmployee(Client client, string position, decimal salary, string contract)
+        public static Employee ConvertClientToEmployee(Client client, string position, decimal salary, string phoneNumber,string contract)
         {
             // Создание сотрудника, используя данные клиента и указанную должность и зарплату.
-            Employee employee = new Employee(client.FirstName, client.LastName, client.DateOfBirth, position, salary, contract);
+            Employee employee = new Employee(client.FirstName, client.LastName, client.DateOfBirth, position, salary, phoneNumber, contract);
             return employee;
         }
     }

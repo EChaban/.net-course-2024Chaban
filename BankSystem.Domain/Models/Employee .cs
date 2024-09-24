@@ -13,11 +13,14 @@ namespace BankSystem.Domain.Models
         public decimal Salary { get; set; }
         public string Contract { get; set; }
 
-        public Employee(string firstName, string lastName, DateTime dateOfBirth, string position, decimal salary, string contract)
+        public string PhonNumber { get; set; }
+
+        public Employee(string firstName, string lastName, DateTime dateOfBirth, string position, decimal salary, string phoneNumber, string contract)
             : base(firstName, lastName, dateOfBirth)
         {
             Position = position;
             Salary = salary;
+            PhonNumber = phoneNumber;
             Contract = contract;
         }
 
