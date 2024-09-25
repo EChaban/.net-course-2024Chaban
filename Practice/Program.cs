@@ -9,9 +9,14 @@ namespace Practice
     {
         static void Main(string[] args)
         {
+            // Второе дз
+            Console.WriteLine("Второе дз:");
+
             List<Client> clientList = TestDataGenerator.GenerateClientList();
             Dictionary<string, Client> clientDictionary = TestDataGenerator.GenerateClientDictionary();
             List<Employee> employeeList = TestDataGenerator.GenerateEmployeeList();
+            Dictionary<string, Employee> employeeDictionary = TestDataGenerator.GenerateEmployeeDictionary();
+
 
             // Создаём тестого клиента которого будем использовать для поиска по номеру телефона
             Client testClient = new Client("Иван", "Иванов", new DateTime(1990, 1, 1), 199011, 100, "+37377999999", "Контракт");
@@ -26,7 +31,7 @@ namespace Practice
 
             // Замер времени поиска в СПИСКЕ
             stopwatch.Start();
-            var clientFromList = clientList.Find(c => c.PhonNumber.Contains(searchPhoneNumber));
+            var clientFromList = clientList.Find(c => c.PhoneNumber.Contains(searchPhoneNumber));
             stopwatch.Stop();
             Console.WriteLine($"Клиент {clientFromList.FirstName} {clientFromList.LastName} найден в СПИСКЕ, поиск занял: {stopwatch.Elapsed}");
 
@@ -54,12 +59,55 @@ namespace Practice
             Console.WriteLine($"Количество клиентов моложе {ageLimit} лет: {youngClientsFromDictionary.Count}");
             Console.WriteLine($"Выборка клиентов моложе 30 в СЛОВАРЕ заняло: {stopwatch.Elapsed}");
 
-            // Поиск сотрудника с минимальной заработной платой
-            var employeeWithMinSalary = employeeList.MinBy(e => e.Salary);
+            // Поиск сотрудника с минимальной заработной платой в СПИСКЕ
             stopwatch.Restart();
-            Console.WriteLine($"\nСотрудник с минимальной зарплатой: {employeeWithMinSalary.FirstName} {employeeWithMinSalary.LastName}, Зарплата: {employeeWithMinSalary.Salary}");
+            var employeeWithMinSalary = employeeList.MinBy(e => e.Salary);
             stopwatch.Stop();
-            Console.WriteLine($"Поиск сотрудника с минимальной заработной платой занял: {stopwatch.Elapsed}");
+            Console.WriteLine($"\nСотрудник с минимальной зарплатой: {employeeWithMinSalary.FirstName} {employeeWithMinSalary.LastName}, Зарплата: {employeeWithMinSalary.Salary}");
+            Console.WriteLine($"Поиск сотрудника в СПИСКЕ с минимальной заработной платой занял: {stopwatch.Elapsed}");
+
+            // Поиск сотрудника с минимальной заработной платой в СЛОВАРЕ
+            stopwatch.Restart();
+            var employeeWithMinSalaryDictionary = employeeDictionary.Values.MinBy(e => e.Salary);
+            stopwatch.Stop();
+            Console.WriteLine($"\nСотрудник с минимальной зарплатой: {employeeWithMinSalaryDictionary.FirstName} {employeeWithMinSalaryDictionary.LastName}, Зарплата: {employeeWithMinSalaryDictionary.Salary}");
+            Console.WriteLine($"Поиск сотрудника в СЛОВАРЕ с минимальной заработной платой занял: {stopwatch.Elapsed}");
+
+
+
+
+            // Первое дз
+            Console.WriteLine("\n\nПервое дз:");
+
+            // Добавление кодировки UTF-8, для отображения символов валюты ($, €, ₽)
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            // Пример метода обновляющего сущность валюты 
+            Currency currency = new Currency("USD", '$');
+            Console.WriteLine("Initial currency: " + currency);
+            UpdateCurrency(ref currency, "EUR", '€'); // Изменяем значение валюты на EUR
+            Console.WriteLine($"Updated Currency: {currency}");
+
+            // Пример обновления контракта сотрудника
+            Employee employee = new Employee("Eugene", "Chaban", new DateTime(1994, 07, 20), "Developer", 1000, "+37377711111", "Work hardest");
+            Console.WriteLine($"Updated employee contract: {employee.Contract}{currency.Symbol}");
+            UpdateEmployeeContract(employee);
+            Console.WriteLine($"Updated Employee Contract: {employee.Contract}{currency.Symbol}");
+
+            // Пример расчета зарплаты владельцев
+            Employee owner = new Employee("Ivan", "Gel", new DateTime(1985, 01, 01), "CEO", 10000, "+37377777777", "Like a boss");
+            int profit = 100000; // Пример прибыли
+            int expenses = 50000; // Пример расходов
+            int ownersCount = 2; // Количество владельцев
+
+            BankService.CalculateOwnerSalary(owner, profit, expenses, ownersCount);
+            Console.WriteLine($"Salary of {owner.FirstName} {owner.LastName} is {owner.Salary}{currency.Symbol}");
+
+            // Преобразование клиента банка в сотрудника
+            Client client = new Client("Johnny", "Bravo", new DateTime(1997, 07, 7), 001, 100, "+37377712345", "The oldest client");
+
+            var newEmployee = BankService.ConvertClientToEmployee(client, "CFO", 10000, "The new CFO");
+            Console.WriteLine(newEmployee);
         }
 
         // Метод, обновляющий контракт сотрудника
