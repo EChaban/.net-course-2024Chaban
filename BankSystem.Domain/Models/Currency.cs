@@ -22,5 +22,29 @@ namespace BankSystem.Domain.Models
         {
             return $"{Code} - {Symbol}";
         }
+
+        public static bool operator ==(Currency a, Currency b)
+        {
+            return a.Code == b.Code && a.Symbol == b.Symbol;
+        }
+
+        public static bool operator !=(Currency a, Currency b)
+        {
+            return !(a == b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Currency currency)
+            {
+                return this == currency;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Code, Symbol);
+        }
     }
 }
