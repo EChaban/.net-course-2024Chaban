@@ -29,5 +29,10 @@ namespace BankSystem.Domain.Models
         {
             return $"{FirstName} {LastName}, {DateOfBirth.ToShortDateString()}";
         }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(FirstName, LastName, DateOfBirth);
+        }
     }
 }

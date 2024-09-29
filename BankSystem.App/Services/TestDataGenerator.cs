@@ -10,6 +10,57 @@ namespace BankSystem.App.Services
 {
     public static class TestDataGenerator
     {
+        // Метод для генерации СЛОВАРЯ с банковскими аккаунтами
+        public static Dictionary<Client, Account> GenerateClientAccounts()
+        {
+            var currencies = new List<Currency>
+            {
+                new Currency("USD", '$'),
+                new Currency("EUR", '€'),
+                new Currency("RUB", '₽')
+            };
+
+            var faker = new Faker<Account>()
+                .RuleFor(a => a.Currency, f => f.PickRandom(currencies))
+                .RuleFor(a => a.Amount, f => f.Finance.Amount(100, 1000000));
+
+            var clients = GenerateClientList();
+            return clients.ToDictionary(c => c, c => faker.Generate());
+        }
+
+        // Метод для генерации СЛОВАРЯ клиентов с несколькими банковскими аккаунтами
+        public static Dictionary<Client, List<Account>> GenerateClientWithSeveralAccounts()
+        {
+            var currencies = new List<Currency>
+            {
+                new Currency("USD", '$'),
+                new Currency("EUR", '€'),
+                new Currency("RUB", '₽')
+            };
+
+            var faker = new Faker<Account>()
+                .RuleFor(a => a.Currency, f => f.PickRandom(currencies))
+                .RuleFor(a => a.Amount, f => f.Finance.Amount(100, 1000000));
+
+            var clients = GenerateClientList();
+            var clientAccountsDictionary = new Dictionary<Client, List<Account>>();
+
+            foreach (var client in clients)
+            {
+                var accountCount = new Random().Next(1, 5);
+                var accounts = new List<Account>();
+
+                for (int i = 0; i < accountCount; i++)
+                {
+                    accounts.Add(faker.Generate());
+                }
+
+                clientAccountsDictionary[client] = accounts;
+            }
+
+            return clientAccountsDictionary;
+        }
+
         // Метод для генерации СПИСКА случайных клиентов банка
         public static List<Client> GenerateClientList()
         {
