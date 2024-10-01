@@ -28,13 +28,13 @@ namespace BankSystem.Data.Storages
         public Client GetYoungestClient()
         {
             if (_clients.Count == 0) return null;
-            return _clients.OrderBy(c => c.DateOfBirth).Last();
+            return _clients.MaxBy(c => c.DateOfBirth);
         }
 
         public Client GetOldestClient()
         {
             if (_clients.Count == 0) return null;
-            return _clients.OrderBy(c => c.DateOfBirth).First();
+            return _clients.MinBy(c => c.DateOfBirth);
         }
 
         public int GetAverageAge()

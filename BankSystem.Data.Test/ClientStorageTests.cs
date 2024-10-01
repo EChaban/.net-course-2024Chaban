@@ -10,6 +10,34 @@ namespace BankSystem.App.Tests
     public class ClientStorageTests
     {
         [Fact]
+        public void AddClient_ShouldIncreaseClientCount()
+        {
+            // Arrange
+            var storage = new ClientStorage();
+            var client = new Client("Иван", "Иванов", new DateTime(1990, 1, 1), 001, 100, "Телефон", "Контракт");
+
+            // Act
+            storage.AddClient(client);
+
+            // Assert
+            Assert.Equal(1, storage.Count());
+        }
+
+        [Fact]
+        public void AddClientList_ShouldIncreaseClientCount()
+        {
+            // Arrange
+            var storage = new ClientStorage();
+            var clients = TestDataGenerator.GenerateClientList();
+
+            // Act
+            storage.AddClientList(clients);
+
+            // Assert
+            Assert.Equal(1000, storage.Count());
+        }
+
+        [Fact]
         public void GetYoungestClient_ShouldReturnYoungestClient()
         {
             // Arrange
@@ -23,7 +51,6 @@ namespace BankSystem.App.Tests
             var youngestClient = storage.GetYoungestClient();
 
             // Assert
-            Assert.Equal(1001, storage.Count()); // Проверяем, работают ли оба метода добавления клиентов в хранилище
             Assert.Equal(expectedYoungestClient, youngestClient);
         }
 
@@ -49,20 +76,21 @@ namespace BankSystem.App.Tests
         {
             // Arrange
             var storage = new ClientStorage();
-            int expectedAverageAge = 40;
-            for (int i = 1; i < 21; i++)
-            {
-                Client youngerClient = new Client("Имя", "Фамилия", new DateTime(DateTime.Now.Year - expectedAverageAge + i, 1, 1), 100+i, 100, "Телефон", "Контракт");
-                storage.AddClient(youngerClient);
-                Client olderClient = new Client("Имя", "Фамилия", new DateTime(DateTime.Now.Year - expectedAverageAge - i, 1, 1), 100-i, 100, "Телефон", "Контракт");
-                storage.AddClient(olderClient);
-            }
+            var client1 = new Client("Иван", "Иванов", new DateTime(1984, 1, 1), 001, 100, "Телефон", "Контракт"); // 40 года
+            var client2 = new Client("Петр", "Петров", new DateTime(1994, 1, 1), 002, 100, "Телефон", "Контракт"); // 30 года
+            var client3 = new Client("Сидор", "Сидоров", new DateTime(2004, 1, 1), 003, 100, "Телефон", "Контракт"); // 20 года
+
+            storage.AddClient(client1);
+            storage.AddClient(client2);
+            storage.AddClient(client3);
+
+            int expectedAverageAge = 30; // (40 + 30 + 20) / 3 = 30 года
 
             // Act
-            var averageAge = storage.GetAverageAge();
+            var actualAverageAge = storage.GetAverageAge();
 
             // Assert
-            Assert.Equal(expectedAverageAge, averageAge);
+            Assert.Equal(expectedAverageAge, actualAverageAge);
         }
     }
 }

@@ -28,13 +28,13 @@ namespace BankSystem.Data.Storages
         public Employee GetYoungestEmployee()
         {
             if (_employees.Count == 0) return null;
-            return _employees.OrderBy(c => c.DateOfBirth).Last();
+            return _employees.MaxBy(c => c.DateOfBirth);
         }
 
         public Employee GetOldestEmployee()
         {
             if (_employees.Count == 0) return null;
-            return _employees.OrderBy(c => c.DateOfBirth).First();
+            return _employees.MinBy(c => c.DateOfBirth);
         }
 
         public int GetAverageAge()
