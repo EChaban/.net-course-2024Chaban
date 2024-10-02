@@ -42,7 +42,7 @@ namespace BankSystem.Data.Storages
         {
             if (_clients.Count == 0) return 0;
 
-            int totalAge = _clients.Sum(c => BankService.CheckBirthdayThisYear(c.DateOfBirth));
+            int totalAge = _clients.Sum(c => UtilityMethods.CalculateBirthdayThisYear(c.DateOfBirth));
 
             return totalAge / _clients.Count;
         }

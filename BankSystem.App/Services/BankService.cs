@@ -10,18 +10,6 @@ namespace BankSystem.App.Services
 {
     public class BankService
     {
-        public static int CheckBirthdayThisYear(DateTime dateOfBirth)
-        {
-            int age = DateTime.Now.Year - dateOfBirth.Year;
-
-            if (DateTime.Now.Month < dateOfBirth.Month || (DateTime.Now.Month == dateOfBirth.Month && DateTime.Now.Day < dateOfBirth.Day))
-            {
-                age--;
-            }
-
-            return age;
-        }
-
         public static void CalculateOwnerSalary(object owner, int profit, int expenses, int ownerCount)
         {
             if (ownerCount <= 0) throw new ArgumentException("Количество владельцев должно быть больше 0.");
