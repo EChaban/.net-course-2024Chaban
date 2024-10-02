@@ -42,7 +42,7 @@ namespace BankSystem.Data.Storages
         {
             if (_employees.Count == 0) return 0;
 
-            int totalAge = _employees.Sum(e => UtilityMethods.CalculateBirthdayThisYear(e.DateOfBirth));
+            int totalAge = _employees.Sum(e => UtilityMethods.CalculateAge(e.DateOfBirth));
 
             return totalAge / _employees.Count;
         }

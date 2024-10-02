@@ -8,7 +8,7 @@ namespace BankSystem.Data
 {
     public static class UtilityMethods
     {
-        public static int CalculateBirthdayThisYear(this DateTime dateOfBirth)
+        public static int CalculateAge(this DateTime dateOfBirth)
         {
             int age = DateTime.Now.Year - dateOfBirth.Year;
 
