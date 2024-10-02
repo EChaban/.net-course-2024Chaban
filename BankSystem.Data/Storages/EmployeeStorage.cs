@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BankSystem.App.Services;
 using BankSystem.Domain.Models;
 
 namespace BankSystem.Data.Storages
@@ -41,17 +42,7 @@ namespace BankSystem.Data.Storages
         {
             if (_employees.Count == 0) return 0;
 
-            int totalAge = _employees.Sum(c =>
-            {
-                int age = DateTime.Now.Year - c.DateOfBirth.Year;
-
-                if (DateTime.Now.Month < c.DateOfBirth.Month || (DateTime.Now.Month == c.DateOfBirth.Month && DateTime.Now.Day < c.DateOfBirth.Day))
-                {
-                    age--;
-                }
-
-                return age;
-            });
+            int totalAge = _employees.Sum(e => BankService.CheckBirthdayThisYear(e.DateOfBirth));
 
             return totalAge / _employees.Count;
         }
