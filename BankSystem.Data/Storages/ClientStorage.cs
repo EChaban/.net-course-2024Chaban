@@ -41,8 +41,19 @@ namespace BankSystem.Data.Storages
         {
             if (_clients.Count == 0) return 0;
 
-            int averageAge = _clients.Sum(c => DateTime.Now.Year - c.DateOfBirth.Year);
-            return averageAge / _clients.Count;
+            int totalAge = _clients.Sum(c =>
+            {
+                int age = DateTime.Now.Year - c.DateOfBirth.Year;
+
+                if (DateTime.Now.Month < c.DateOfBirth.Month || (DateTime.Now.Month == c.DateOfBirth.Month && DateTime.Now.Day < c.DateOfBirth.Day))
+                {
+                    age--;
+                }
+
+                return age;
+            });
+
+            return totalAge / _clients.Count;
         }
     }
 }
