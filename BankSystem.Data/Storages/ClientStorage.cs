@@ -9,16 +9,19 @@ namespace BankSystem.Data.Storages
 {
     public class ClientStorage
     {
-        private List<Client> _clients = new List<Client>();
+        private Dictionary<Client, List<Account>> _clients = new Dictionary<Client, List<Account>>();
 
-        public void AddClient(Client client)
+        public void AddClient(Client client, List<Account> accounts)
         {
-            _clients.Add(client);
+            _clients.Add(client, accounts);
         }
 
-        public void AddClientList(List<Client> clients)
+        public void AddClientList(Dictionary<Client, List<Account>> accounts)
         {
-            _clients.AddRange(clients);
+            foreach (var account in accounts)
+            {
+                _clients.Add(account.Key, account.Value);
+            }
         }
 
         public int Count()
@@ -29,20 +32,20 @@ namespace BankSystem.Data.Storages
         public Client GetYoungestClient()
         {
             if (_clients.Count == 0) return null;
-            return _clients.MaxBy(c => c.DateOfBirth);
+            return _clients.Keys.MaxBy(c => c.DateOfBirth);
         }
 
         public Client GetOldestClient()
         {
             if (_clients.Count == 0) return null;
-            return _clients.MinBy(c => c.DateOfBirth);
+            return _clients.Keys.MinBy(c => c.DateOfBirth);
         }
 
         public int GetAverageAge()
         {
             if (_clients.Count == 0) return 0;
 
-            int totalAge = _clients.Sum(c => UtilityMethods.CalculateAge(c.DateOfBirth));
+            int totalAge = _clients.Keys.Sum(c => UtilityMethods.CalculateAge(c.DateOfBirth));
 
             return totalAge / _clients.Count;
         }
