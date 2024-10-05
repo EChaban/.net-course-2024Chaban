@@ -15,7 +15,7 @@ namespace BankSystem.App.Tests
         {
             // Arrange
             var storage = new ClientStorage();
-            var client = new Client("Иван", "Иванов", new DateTime(1990, 1, 1), 001, 100, "Телефон", "Контракт");
+            var client = new Client("Иван", "Иванов", new DateTime(1990, 1, 1), 001, "Телефон", "Контракт", "1234567890");
             var accounts = new List<Account> { new Account(new Currency("RUB", '₽'), 1000) };
 
             // Act
@@ -46,7 +46,7 @@ namespace BankSystem.App.Tests
             var storage = new ClientStorage();
             storage.AddClientList(TestDataGenerator.GenerateClientWithSeveralAccounts());
 
-            var expectedYoungestClient = new Client("Иван", "Иванов", new DateTime(2007, 1, 1), 001, 100, "Телефон", "Контракт");
+            var expectedYoungestClient = new Client("Иван", "Иванов", new DateTime(2007, 1, 1), 001, "Телефон", "Контракт", "1234567890");
             var accounts = new List<Account> { new Account(new Currency("RUB", '₽'), 1000) };
             storage.AddClient(expectedYoungestClient, accounts);
 
@@ -64,7 +64,7 @@ namespace BankSystem.App.Tests
             var storage = new ClientStorage();
             storage.AddClientList(TestDataGenerator.GenerateClientWithSeveralAccounts());
 
-            var expectedOldestClient = new Client("Иван", "Иванов", new DateTime(1944, 1, 1), 001, 100, "Телефон", "Контракт");
+            var expectedOldestClient = new Client("Иван", "Иванов", new DateTime(1944, 1, 1), 001, "Телефон", "Контракт", "1234567890");
             var accounts = new List<Account> { new Account(new Currency("RUB", '₽'), 1000) };
             storage.AddClient(expectedOldestClient, accounts);
 
@@ -80,9 +80,9 @@ namespace BankSystem.App.Tests
         {
             // Arrange
             var storage = new ClientStorage();
-            var client1 = new Client("Иван", "Иванов", new DateTime(1984, 1, 1), 001, 100, "Телефон", "Контракт"); // 40 лет
-            var client2 = new Client("Петр", "Петров", new DateTime(1994, 1, 1), 002, 100, "Телефон", "Контракт"); // 30 лет
-            var client3 = new Client("Сидор", "Сидоров", new DateTime(2004, 1, 1), 003, 100, "Телефон", "Контракт"); // 20 лет
+            var client1 = new Client("Иван", "Иванов", new DateTime(1984, 1, 1), 001, "Телефон", "Контракт", "1234567890"); // 40 лет
+            var client2 = new Client("Петр", "Петров", new DateTime(1994, 1, 1), 002, "Телефон", "Контракт", "1234567891"); // 30 лет
+            var client3 = new Client("Сидор", "Сидоров", new DateTime(2004, 1, 1), 003, "Телефон", "Контракт", "1234567892"); // 20 лет
 
             var accounts = new List<Account> { new Account(new Currency("RUB", '₽'), 1000) };
 

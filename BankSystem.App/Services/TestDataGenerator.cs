@@ -69,7 +69,6 @@ namespace BankSystem.App.Services
                 .RuleFor(c => c.LastName, f => f.Name.LastName())
                 .RuleFor(c => c.DateOfBirth, f => f.Date.Past(52, DateTime.Now.AddYears(-18)))
                 .RuleFor(c => c.ClientId, f => f.IndexFaker + 1)
-                .RuleFor(c => c.AccountBalance, f => f.Finance.Amount(0, 1000000))
                 .RuleFor(c => c.PhoneNumber, f => f.Phone.PhoneNumber("+373########"))
                 .RuleFor(c => c.ContractInfo, (f, c) => $"Контракт заключен между \"Банком\" и {c.FirstName} {c.LastName} с целью предоставления банковских услуг. Начало действия контракта {DateTime.Now:dd.MM.yyyy}.");
 
