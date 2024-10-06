@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using BankSystem.App.Services;
 using BankSystem.Domain.Models;
 
 namespace BankSystem.Data.Storages
@@ -26,13 +24,13 @@ namespace BankSystem.Data.Storages
             return _employees.Count;
         }
 
-        public Employee GetYoungestEmployee()
+        public Employee? GetYoungestEmployee()
         {
             if (_employees.Count == 0) return null;
             return _employees.MaxBy(c => c.DateOfBirth);
         }
 
-        public Employee GetOldestEmployee()
+        public Employee? GetOldestEmployee()
         {
             if (_employees.Count == 0) return null;
             return _employees.MinBy(c => c.DateOfBirth);
@@ -45,6 +43,25 @@ namespace BankSystem.Data.Storages
             int totalAge = _employees.Sum(e => UtilityMethods.CalculateAge(e.DateOfBirth));
 
             return totalAge / _employees.Count;
+        }
+
+        public void EditEmployee(Employee oldEmployee, Employee newEmployee)
+        {
+            var index = _employees.IndexOf(oldEmployee);
+            if (index != -1)
+            {
+                _employees[index] = newEmployee;
+            }
+        }
+
+        public IEnumerable<Employee> GetEmployees(string? fullName = null, string? phoneNumber = null, string? position = null, DateTime? dateOfBirthFrom = null, DateTime? dateOfBirthTo = null)
+        {
+            return _employees.Where(e =>
+                (string.IsNullOrEmpty(fullName) || $"{e.FirstName} {e.LastName}".Contains(fullName)) &&
+                (string.IsNullOrEmpty(phoneNumber) || e.PhoneNumber == phoneNumber) &&
+                (string.IsNullOrEmpty(position) || e.Position == position) &&
+                (!dateOfBirthFrom.HasValue || e.DateOfBirth >= dateOfBirthFrom.Value) &&
+                (!dateOfBirthTo.HasValue || e.DateOfBirth <= dateOfBirthTo.Value));
         }
     }
 }

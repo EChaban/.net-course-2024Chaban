@@ -2,6 +2,8 @@
 using BankSystem.Domain.Models;
 using BankSystem.App.Services;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Practice
 {
@@ -17,9 +19,8 @@ namespace Practice
             List<Employee> employeeList = TestDataGenerator.GenerateEmployeeList();
             Dictionary<string, Employee> employeeDictionary = TestDataGenerator.GenerateEmployeeDictionary();
 
-
             // Создаём тестого клиента которого будем использовать для поиска по номеру телефона
-            Client testClient = new Client("Иван", "Иванов", new DateTime(1990, 1, 1), 199011, 100, "+37377999999", "Контракт");
+            Client testClient = new Client("Иван", "Иванов", new DateTime(1990, 1, 1), 199011, "+37377999999", "Контракт", "1234567890");
 
             // Добавляем тестого клиента в коллекцию и словарь
             clientList.Add(testClient);
@@ -33,13 +34,27 @@ namespace Practice
             stopwatch.Start();
             var clientFromList = clientList.Find(c => c.PhoneNumber.Contains(searchPhoneNumber));
             stopwatch.Stop();
-            Console.WriteLine($"Клиент {clientFromList.FirstName} {clientFromList.LastName} найден в СПИСКЕ, поиск занял: {stopwatch.Elapsed}");
+            if (clientFromList != null)
+            {
+                Console.WriteLine($"Клиент {clientFromList.FirstName} {clientFromList.LastName} найден в СПИСКЕ, поиск занял: {stopwatch.Elapsed}");
+            }
+            else
+            {
+                Console.WriteLine("Клиент не найден в СПИСКЕ.");
+            }
 
             // Замер времени поиска в СЛОВАРЕ
             stopwatch.Restart();
             clientDictionary.TryGetValue(searchPhoneNumber, out var clientFromDictionary);
             stopwatch.Stop();
-            Console.WriteLine($"Клиент {clientFromDictionary.FirstName} {clientFromDictionary.LastName} найден в СЛОВАРЕ, поиск занял: {stopwatch.Elapsed}");
+            if (clientFromDictionary != null)
+            {
+                Console.WriteLine($"Клиент {clientFromDictionary.FirstName} {clientFromDictionary.LastName} найден в СЛОВАРЕ, поиск занял: {stopwatch.Elapsed}");
+            }
+            else
+            {
+                Console.WriteLine("Клиент не найден в СЛОВАРЕ.");
+            }
 
             // Выборка клиентов из СПИСКА, возраст которых меньше 30 лет 
             int ageLimit = 30;
@@ -63,18 +78,29 @@ namespace Practice
             stopwatch.Restart();
             var employeeWithMinSalary = employeeList.MinBy(e => e.Salary);
             stopwatch.Stop();
-            Console.WriteLine($"\nСотрудник с минимальной зарплатой: {employeeWithMinSalary.FirstName} {employeeWithMinSalary.LastName}, Зарплата: {employeeWithMinSalary.Salary}");
-            Console.WriteLine($"Поиск сотрудника в СПИСКЕ с минимальной заработной платой занял: {stopwatch.Elapsed}");
+            if (employeeWithMinSalary != null)
+            {
+                Console.WriteLine($"\nСотрудник с минимальной зарплатой: {employeeWithMinSalary.FirstName} {employeeWithMinSalary.LastName}, Зарплата: {employeeWithMinSalary.Salary}");
+                Console.WriteLine($"Поиск сотрудника в СПИСКЕ с минимальной заработной платой занял: {stopwatch.Elapsed}");
+            }
+            else
+            {
+                Console.WriteLine("Сотрудник с минимальной зарплатой не найден в СПИСКЕ.");
+            }
 
             // Поиск сотрудника с минимальной заработной платой в СЛОВАРЕ
             stopwatch.Restart();
             var employeeWithMinSalaryDictionary = employeeDictionary.Values.MinBy(e => e.Salary);
             stopwatch.Stop();
-            Console.WriteLine($"\nСотрудник с минимальной зарплатой: {employeeWithMinSalaryDictionary.FirstName} {employeeWithMinSalaryDictionary.LastName}, Зарплата: {employeeWithMinSalaryDictionary.Salary}");
-            Console.WriteLine($"Поиск сотрудника в СЛОВАРЕ с минимальной заработной платой занял: {stopwatch.Elapsed}");
-
-
-
+            if (employeeWithMinSalaryDictionary != null)
+            {
+                Console.WriteLine($"\nСотрудник с минимальной зарплатой: {employeeWithMinSalaryDictionary.FirstName} {employeeWithMinSalaryDictionary.LastName}, Зарплата: {employeeWithMinSalaryDictionary.Salary}");
+                Console.WriteLine($"Поиск сотрудника в СЛОВАРЕ с минимальной заработной платой занял: {stopwatch.Elapsed}");
+            }
+            else
+            {
+                Console.WriteLine("Сотрудник с минимальной зарплатой не найден в СЛОВАРЕ.");
+            }
 
             // Первое дз
             Console.WriteLine("\n\nПервое дз:");
@@ -104,7 +130,7 @@ namespace Practice
             Console.WriteLine($"Salary of {owner.FirstName} {owner.LastName} is {owner.Salary}{currency.Symbol}");
 
             // Преобразование клиента банка в сотрудника
-            Client client = new Client("Johnny", "Bravo", new DateTime(1997, 07, 7), 001, 100, "+37377712345", "The oldest client");
+            Client client = new Client("Johnny", "Bravo", new DateTime(1997, 07, 7), 001, "+37377712345", "The oldest client", "1234567891");
 
             var newEmployee = BankService.ConvertClientToEmployee(client, "CFO", 10000, "The new CFO");
             Console.WriteLine(newEmployee);
