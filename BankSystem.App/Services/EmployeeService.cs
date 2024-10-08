@@ -1,5 +1,6 @@
 ﻿using BankSystem.Domain.Models;
 using BankSystem.App.Exceptions;
+using BankSystem.App.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,9 @@ namespace BankSystem.App.Services
 {
     public class EmployeeService
     {
-        private readonly EmployeeStorage _employeeStorage;
+        private readonly IEmployeeStorage _employeeStorage;
 
-        public EmployeeService(EmployeeStorage employeeStorage)
+        public EmployeeService(IEmployeeStorage employeeStorage)
         {
             _employeeStorage = employeeStorage;
         }
@@ -18,13 +19,13 @@ namespace BankSystem.App.Services
         public void AddEmployee(Employee employee)
         {
             ValidateEmployee(employee);
-            _employeeStorage.AddEmployee(employee);
+            _employeeStorage.Add(employee);
         }
 
-        public void EditEmployee(Employee oldEmployee, Employee newEmployee)
+        public void EditEmployee(Employee employee)
         {
-            ValidateEmployee(newEmployee);
-            _employeeStorage.EditEmployee(oldEmployee, newEmployee);
+            ValidateEmployee(employee);
+            _employeeStorage.Update(employee);
         }
 
         public IEnumerable<Employee> GetEmployees(string? fullName = null, string? phoneNumber = null, string? position = null, DateTime? dateOfBirthFrom = null, DateTime? dateOfBirthTo = null)

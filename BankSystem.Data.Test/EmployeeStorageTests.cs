@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using BankSystem.Data.Storages;
 using BankSystem.App.Services;
+using BankSystem.Data.Storages;
 using BankSystem.Domain.Models;
 using Xunit;
 
@@ -17,7 +17,7 @@ namespace BankSystem.App.Tests
             var employee = new Employee("Иван", "Иванов", new DateTime(1990, 1, 1), "Должность", 500, "Телефон", "Контракт");
 
             // Act
-            storage.AddEmployee(employee);
+            storage.Add(employee);
 
             // Assert
             Assert.Equal(1, storage.Count());
@@ -45,7 +45,7 @@ namespace BankSystem.App.Tests
             storage.AddEmployeeList(TestDataGenerator.GenerateEmployeeList());
 
             var expectedYoungestEmployee = new Employee("Иван", "Иванов", new DateTime(2007, 1, 1), "Должность", 500, "Телефон", "Контракт");
-            storage.AddEmployee(expectedYoungestEmployee);
+            storage.Add(expectedYoungestEmployee);
 
             // Act
             var youngestEmployee = storage.GetYoungestEmployee();
@@ -62,7 +62,7 @@ namespace BankSystem.App.Tests
             storage.AddEmployeeList(TestDataGenerator.GenerateEmployeeList());
 
             var expectedOldestEmployee = new Employee("Иван", "Иванов", new DateTime(1944, 1, 1), "Должность", 500, "Телефон", "Контракт");
-            storage.AddEmployee(expectedOldestEmployee);
+            storage.Add(expectedOldestEmployee);
 
             // Act
             var oldestEmployee = storage.GetOldestEmployee();
@@ -76,15 +76,15 @@ namespace BankSystem.App.Tests
         {
             // Arrange
             var storage = new EmployeeStorage();
-            var employee1 = new Employee("Иван", "Иванов", new DateTime(1984, 1, 1), "Должность", 500, "Телефон", "Контракт"); // 40 года
-            var employee2 = new Employee("Петр", "Петров", new DateTime(1994, 1, 1), "Должность", 500, "Телефон", "Контракт"); // 30 года
-            var employee3 = new Employee("Сидор", "Сидоров", new DateTime(2004, 1, 1), "Должность", 500, "Телефон", "Контракт"); // 20 года
+            var employee1 = new Employee("Иван", "Иванов", new DateTime(1984, 1, 1), "Должность", 500, "Телефон", "Контракт"); // 40 лет
+            var employee2 = new Employee("Петр", "Петров", new DateTime(1994, 1, 1), "Должность", 500, "Телефон", "Контракт"); // 30 лет
+            var employee3 = new Employee("Сидор", "Сидоров", new DateTime(2004, 1, 1), "Должность", 500, "Телефон", "Контракт"); // 20 лет
 
-            storage.AddEmployee(employee1);
-            storage.AddEmployee(employee2);
-            storage.AddEmployee(employee3);
+            storage.Add(employee1);
+            storage.Add(employee2);
+            storage.Add(employee3);
 
-            int expectedAverageAge = 30; // (40 + 30 + 20) / 3 = 30 года
+            int expectedAverageAge = 30; // (40 + 30 + 20) / 3 = 30 лет
 
             // Act
             var actualAverageAge = storage.GetAverageAge();

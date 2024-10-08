@@ -1,5 +1,6 @@
 ﻿using BankSystem.App.Exceptions;
 using BankSystem.App.Services;
+using BankSystem.App.Interfaces;
 using BankSystem.Data.Storages;
 using BankSystem.Domain.Models;
 using Xunit;
@@ -9,7 +10,7 @@ using System.Linq;
 public class ClientServiceTests
 {
     private readonly ClientService _clientService;
-    private readonly ClientStorage _clientStorage;
+    private readonly IClientStorage _clientStorage;
 
     public ClientServiceTests()
     {
@@ -47,7 +48,7 @@ public class ClientServiceTests
         _clientService.AddClient(client);
 
         // Assert
-        Assert.Equal(1, _clientStorage.Count());
+        Assert.Single(_clientStorage.Get(c => true));
     }
 
     [Fact]
@@ -73,7 +74,7 @@ public class ClientServiceTests
         _clientService.AddAdditionalAccount(client, account);
 
         // Assert
-        var storedAccounts = _clientStorage.GetAccountsByClient(client);
+        var storedAccounts = _clientService.GetAccountsByClient(client);
         Assert.Contains(account, storedAccounts);
     }
 
@@ -103,7 +104,7 @@ public class ClientServiceTests
         _clientService.EditAccount(client, oldAccount, newAccount);
 
         // Assert
-        var storedAccounts = _clientStorage.GetAccountsByClient(client);
+        var storedAccounts = _clientService.GetAccountsByClient(client);
         Assert.Contains(newAccount, storedAccounts);
         Assert.DoesNotContain(oldAccount, storedAccounts);
     }
@@ -192,6 +193,4 @@ public class ClientServiceTests
         Assert.Contains(client1, clients);
         Assert.DoesNotContain(client2, clients);
     }
-
-
 }
