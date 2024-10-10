@@ -1,9 +1,6 @@
-﻿using BankSystem.Domain.Models;
-using BankSystem.App.Exceptions;
+﻿using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using BankSystem.Domain.Models;
 
 namespace BankSystem.App.Services
 {
@@ -57,7 +54,8 @@ namespace BankSystem.App.Services
 
         public IEnumerable<Account> GetAccountsByClient(Client client)
         {
-            if (!_clientStorage.Get(c => c.Equals(client)).Any())
+            var clients = _clientStorage.Get(c => c.Equals(client));
+            if (!clients.Any())
                 throw new ClientValidationException("Client does not exist.");
 
             return _clientStorage.GetAccounts(client);
@@ -73,7 +71,21 @@ namespace BankSystem.App.Services
 
         public IEnumerable<Client> GetClients(int pageNumber, int pageSize, out int totalClients)
         {
-            return _clientStorage.GetClients(pageNumber, pageSize, out totalClients);
+            var clients = _clientStorage.Get(c => true);
+            totalClients = clients.Count;
+            return clients
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
+        public Client GetYoungestClient()
+        {
+            var clients = _clientStorage.Get(c => true);
+            if (!clients.Any())
+                throw new ClientValidationException("No clients found.");
+
+            return clients.OrderByDescending(c => c.DateOfBirth).First();
         }
     }
 }

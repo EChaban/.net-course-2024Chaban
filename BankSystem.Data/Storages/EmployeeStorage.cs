@@ -25,16 +25,19 @@ namespace BankSystem.Data.Storages
             return _employees.Count;
         }
 
+        public List<Employee> Get(Func<Employee, bool> filter)
+        {
+            return _employees.Where(filter).ToList();
+        }
+
         public Employee? GetYoungestEmployee()
         {
-            if (_employees.Count == 0) return null;
-            return _employees.MaxBy(c => c.DateOfBirth);
+            return _employees.Count == 0 ? null : _employees.MaxBy(c => c.DateOfBirth);
         }
 
         public Employee? GetOldestEmployee()
         {
-            if (_employees.Count == 0) return null;
-            return _employees.MinBy(c => c.DateOfBirth);
+            return _employees.Count == 0 ? null : _employees.MinBy(c => c.DateOfBirth);
         }
 
         public int GetAverageAge()
@@ -44,21 +47,6 @@ namespace BankSystem.Data.Storages
             int totalAge = _employees.Sum(e => UtilityMethods.CalculateAge(e.DateOfBirth));
 
             return totalAge / _employees.Count;
-        }
-
-        public IEnumerable<Employee> GetEmployees(string? fullName = null, string? phoneNumber = null, string? position = null, DateTime? dateOfBirthFrom = null, DateTime? dateOfBirthTo = null)
-        {
-            return _employees.Where(e =>
-                (string.IsNullOrEmpty(fullName) || $"{e.FirstName} {e.LastName}".Contains(fullName)) &&
-                (string.IsNullOrEmpty(phoneNumber) || e.PhoneNumber == phoneNumber) &&
-                (string.IsNullOrEmpty(position) || e.Position == position) &&
-                (!dateOfBirthFrom.HasValue || e.DateOfBirth >= dateOfBirthFrom.Value) &&
-                (!dateOfBirthTo.HasValue || e.DateOfBirth <= dateOfBirthTo.Value));
-        }
-
-        public List<Employee> Get(Func<Employee, bool> filter)
-        {
-            return _employees.Where(filter).ToList();
         }
 
         public void Update(Employee employee)

@@ -30,7 +30,13 @@ namespace BankSystem.App.Services
 
         public IEnumerable<Employee> GetEmployees(string? fullName = null, string? phoneNumber = null, string? position = null, DateTime? dateOfBirthFrom = null, DateTime? dateOfBirthTo = null)
         {
-            return _employeeStorage.GetEmployees(fullName, phoneNumber, position, dateOfBirthFrom, dateOfBirthTo);
+            return _employeeStorage.Get(e =>
+                (string.IsNullOrEmpty(fullName) || $"{e.FirstName} {e.LastName}".Contains(fullName)) &&
+                (string.IsNullOrEmpty(phoneNumber) || e.PhoneNumber == phoneNumber) &&
+                (string.IsNullOrEmpty(position) || e.Position == position) &&
+                (!dateOfBirthFrom.HasValue || e.DateOfBirth >= dateOfBirthFrom.Value) &&
+                (!dateOfBirthTo.HasValue || e.DateOfBirth <= dateOfBirthTo.Value)
+            );
         }
 
         private void ValidateEmployee(Employee employee)

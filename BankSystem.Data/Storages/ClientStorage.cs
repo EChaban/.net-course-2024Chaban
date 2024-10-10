@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using BankSystem.Domain.Models;
+﻿using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
-using BankSystem.App.Exceptions;
+using BankSystem.Domain.Models;
 
 namespace BankSystem.Data.Storages
 {
@@ -23,9 +20,12 @@ namespace BankSystem.Data.Storages
 
         public void Update(Client client)
         {
-            if (_clients.ContainsKey(client))
+            var existingClient = _clients.Keys.FirstOrDefault(c => c.PassportNumber == client.PassportNumber);
+            if (existingClient != null)
             {
-                _clients[client] = _clients[client];
+                var accounts = _clients[existingClient];
+                _clients.Remove(existingClient);
+                _clients.Add(client, accounts);
             }
             else
             {
@@ -73,16 +73,7 @@ namespace BankSystem.Data.Storages
             {
                 return _clients[client];
             }
-            return new List<Account>();
-        }
-
-        public List<Client> GetClients(int pageNumber, int pageSize, out int totalClients)
-        {
-            totalClients = _clients.Count;
-            return _clients.Keys
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+            throw new ClientValidationException("Client does not exist.");
         }
     }
 }

@@ -84,7 +84,7 @@ public class EmployeeServiceTests
         _employeeService.EditEmployee(newEmployee);
 
         // Assert
-        var employees = _employeeStorage.GetEmployees();
+        var employees = _employeeStorage.Get(e => true);
         Assert.Contains(newEmployee, employees);
         Assert.DoesNotContain(oldEmployee, employees);
     }
@@ -174,4 +174,3 @@ public class EmployeeServiceTests
         Assert.DoesNotContain(employee2, employees);
     }
 }
-

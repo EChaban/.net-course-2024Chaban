@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BankSystem.Domain.Models
+﻿namespace BankSystem.Domain.Models
 {
     public class Client : Person
     {
@@ -27,6 +21,20 @@ namespace BankSystem.Domain.Models
             PhoneNumber = phoneNumber;
             ContractInfo = contractInfo;
             PassportNumber = passportNumber;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Client other)
+            {
+                return ClientId == other.ClientId && PassportNumber == other.PassportNumber;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ClientId, PassportNumber);
         }
     }
 }
