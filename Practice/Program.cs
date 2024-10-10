@@ -11,6 +11,29 @@ namespace Practice
     {
         static void Main(string[] args)
         {
+            // Тестирование методов:AddBonus, AddToBlackList, IsPersonInBlackList
+
+            // Создание объектов
+            Client client1 = new Client("Алексей", "Смирнов", new DateTime(1992, 5, 15), 199215, "+37377123456", "Контракт", "1234567892");
+            Employee employee1 = new Employee("Мария", "Иванова", new DateTime(1988, 3, 22), "Менеджер", 2000, "+37377234567", "Контракт");
+
+            // Добавление бонуса сотруднику
+            BankService.AddBonus(employee1, 500);
+            Console.WriteLine($"Зарплата {employee1.FirstName} {employee1.LastName} после добавления бонуса: {employee1.Salary}");
+
+            // Добавление клиента и сотрудника в черный список
+            BankService.AddToBlackList(client1);
+            BankService.AddToBlackList(employee1);
+
+            // Проверка, находятся ли они в черном списке
+            bool isClientInBlackList = BankService.IsPersonInBlackList(client1);
+            bool isEmployeeInBlackList = BankService.IsPersonInBlackList(employee1);
+
+            Console.WriteLine($"Клиент {client1.FirstName} {client1.LastName} в черном списке: {isClientInBlackList}");
+            Console.WriteLine($"Сотрудник {employee1.FirstName} {employee1.LastName} в черном списке: {isEmployeeInBlackList}");
+
+
+
             // Второе дз
             Console.WriteLine("Второе дз:");
 

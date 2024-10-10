@@ -41,7 +41,7 @@ public class EmployeeServiceTests
     public void AddEmployee_ShouldThrowException_WhenEmployeeHasNoPosition()
     {
         // Arrange
-        var employee = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "John", LastName = "Doe", Position = "" };
+        var employee = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "Иван", LastName = "Иванов", Position = "" };
 
         // Act & Assert
         Assert.Throws<EmployeeValidationException>(() => _employeeService.AddEmployee(employee));
@@ -51,7 +51,7 @@ public class EmployeeServiceTests
     public void AddEmployee_ShouldAddEmployee_WhenValidEmployee()
     {
         // Arrange
-        var employee = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "John", LastName = "Doe", Position = "Manager" };
+        var employee = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "Иван", LastName = "Иванов", Position = "Manager" };
 
         // Act
         _employeeService.AddEmployee(employee);
@@ -64,27 +64,27 @@ public class EmployeeServiceTests
     public void EditEmployee_ShouldThrowException_WhenNewEmployeeIsInvalid()
     {
         // Arrange
-        var oldEmployee = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "John", LastName = "Doe", Position = "Manager" };
-        var newEmployee = new Employee { DateOfBirth = DateTime.Now.AddYears(-17), FirstName = "Jane", LastName = "Doe", Position = "Manager" };
+        var oldEmployee = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "Иван", LastName = "Иванов", Position = "Manager" };
+        var newEmployee = new Employee { DateOfBirth = DateTime.Now.AddYears(-17), FirstName = "Мария", LastName = "Петрова", Position = "Manager" };
         _employeeService.AddEmployee(oldEmployee);
 
         // Act & Assert
-        Assert.Throws<EmployeeValidationException>(() => _employeeService.EditEmployee(oldEmployee, newEmployee));
+        Assert.Throws<EmployeeValidationException>(() => _employeeService.EditEmployee(newEmployee));
     }
 
     [Fact]
     public void EditEmployee_ShouldEditEmployee_WhenNewEmployeeIsValid()
     {
         // Arrange
-        var oldEmployee = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "John", LastName = "Doe", Position = "Manager" };
-        var newEmployee = new Employee { DateOfBirth = DateTime.Now.AddYears(-25), FirstName = "Jane", LastName = "Doe", Position = "Director" };
+        var oldEmployee = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "Иван", LastName = "Иванов", Position = "Manager" };
+        var newEmployee = new Employee { DateOfBirth = DateTime.Now.AddYears(-25), FirstName = "Мария", LastName = "Петрова", Position = "Director" };
         _employeeService.AddEmployee(oldEmployee);
 
         // Act
-        _employeeService.EditEmployee(oldEmployee, newEmployee);
+        _employeeService.EditEmployee(newEmployee);
 
         // Assert
-        var employees = _employeeStorage.GetEmployees();
+        var employees = _employeeStorage.Get(e => true);
         Assert.Contains(newEmployee, employees);
         Assert.DoesNotContain(oldEmployee, employees);
     }
@@ -93,8 +93,8 @@ public class EmployeeServiceTests
     public void GetEmployees_ShouldReturnEmployees_WhenEmployeesExist()
     {
         // Arrange
-        var employee1 = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "John", LastName = "Doe", Position = "Manager" };
-        var employee2 = new Employee { DateOfBirth = DateTime.Now.AddYears(-25), FirstName = "Jane", LastName = "Doe", Position = "Director" };
+        var employee1 = new Employee { DateOfBirth = DateTime.Now.AddYears(-20), FirstName = "Иван", LastName = "Иванов", Position = "Manager" };
+        var employee2 = new Employee { DateOfBirth = DateTime.Now.AddYears(-25), FirstName = "Мария", LastName = "Петрова", Position = "Director" };
         _employeeService.AddEmployee(employee1);
         _employeeService.AddEmployee(employee2);
 
@@ -174,4 +174,3 @@ public class EmployeeServiceTests
         Assert.DoesNotContain(employee2, employees);
     }
 }
-

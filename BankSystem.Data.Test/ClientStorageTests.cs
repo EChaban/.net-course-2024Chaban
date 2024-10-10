@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BankSystem.Data.Storages;
 using BankSystem.App.Services;
+using BankSystem.Data;
+using BankSystem.Data.Storages;
 using BankSystem.Domain.Models;
 using Xunit;
 
@@ -16,13 +17,12 @@ namespace BankSystem.App.Tests
             // Arrange
             var storage = new ClientStorage();
             var client = new Client("Иван", "Иванов", new DateTime(1990, 1, 1), 001, "Телефон", "Контракт", "1234567890");
-            var accounts = new List<Account> { new Account(new Currency("RUB", '₽'), 1000) };
 
             // Act
-            storage.AddClient(client, accounts);
+            storage.Add(client);
 
             // Assert
-            Assert.Equal(1, storage.Count());
+            Assert.Single(storage.Get(c => true));
         }
 
         [Fact]
@@ -33,10 +33,13 @@ namespace BankSystem.App.Tests
             var clients = TestDataGenerator.GenerateClientWithSeveralAccounts();
 
             // Act
-            storage.AddClientList(clients);
+            foreach (var client in clients)
+            {
+                storage.Add(client.Key);
+            }
 
             // Assert
-            Assert.Equal(clients.Count, storage.Count());
+            Assert.Equal(clients.Count, storage.Get(c => true).Count);
         }
 
         [Fact]
@@ -44,14 +47,17 @@ namespace BankSystem.App.Tests
         {
             // Arrange
             var storage = new ClientStorage();
-            storage.AddClientList(TestDataGenerator.GenerateClientWithSeveralAccounts());
+            var clients = TestDataGenerator.GenerateClientWithSeveralAccounts();
+            foreach (var client in clients)
+            {
+                storage.Add(client.Key);
+            }
 
             var expectedYoungestClient = new Client("Иван", "Иванов", new DateTime(2007, 1, 1), 001, "Телефон", "Контракт", "1234567890");
-            var accounts = new List<Account> { new Account(new Currency("RUB", '₽'), 1000) };
-            storage.AddClient(expectedYoungestClient, accounts);
+            storage.Add(expectedYoungestClient);
 
             // Act
-            var youngestClient = storage.GetYoungestClient();
+            var youngestClient = storage.Get(c => true).OrderByDescending(c => c.DateOfBirth).FirstOrDefault();
 
             // Assert
             Assert.Equal(expectedYoungestClient, youngestClient);
@@ -62,14 +68,17 @@ namespace BankSystem.App.Tests
         {
             // Arrange
             var storage = new ClientStorage();
-            storage.AddClientList(TestDataGenerator.GenerateClientWithSeveralAccounts());
+            var clients = TestDataGenerator.GenerateClientWithSeveralAccounts();
+            foreach (var client in clients)
+            {
+                storage.Add(client.Key);
+            }
 
             var expectedOldestClient = new Client("Иван", "Иванов", new DateTime(1944, 1, 1), 001, "Телефон", "Контракт", "1234567890");
-            var accounts = new List<Account> { new Account(new Currency("RUB", '₽'), 1000) };
-            storage.AddClient(expectedOldestClient, accounts);
+            storage.Add(expectedOldestClient);
 
             // Act
-            var oldestClient = storage.GetOldestClient();
+            var oldestClient = storage.Get(c => true).OrderBy(c => c.DateOfBirth).FirstOrDefault();
 
             // Assert
             Assert.Equal(expectedOldestClient, oldestClient);
@@ -84,16 +93,16 @@ namespace BankSystem.App.Tests
             var client2 = new Client("Петр", "Петров", new DateTime(1994, 1, 1), 002, "Телефон", "Контракт", "1234567891"); // 30 лет
             var client3 = new Client("Сидор", "Сидоров", new DateTime(2004, 1, 1), 003, "Телефон", "Контракт", "1234567892"); // 20 лет
 
-            var accounts = new List<Account> { new Account(new Currency("RUB", '₽'), 1000) };
-
-            storage.AddClient(client1, accounts);
-            storage.AddClient(client2, accounts);
-            storage.AddClient(client3, accounts);
+            storage.Add(client1);
+            storage.Add(client2);
+            storage.Add(client3);
 
             int expectedAverageAge = 30; // (40 + 30 + 20) / 3 = 30 лет
 
             // Act
-            var actualAverageAge = storage.GetAverageAge();
+            var clients = storage.Get(c => true);
+            int totalAge = clients.Sum(c => UtilityMethods.CalculateAge(c.DateOfBirth));
+            int actualAverageAge = totalAge / clients.Count;
 
             // Assert
             Assert.Equal(expectedAverageAge, actualAverageAge);

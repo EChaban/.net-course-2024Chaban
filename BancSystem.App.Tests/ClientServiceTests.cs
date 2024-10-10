@@ -1,5 +1,6 @@
 ﻿using BankSystem.App.Exceptions;
 using BankSystem.App.Services;
+using BankSystem.App.Interfaces;
 using BankSystem.Data.Storages;
 using BankSystem.Domain.Models;
 using Xunit;
@@ -9,7 +10,7 @@ using System.Linq;
 public class ClientServiceTests
 {
     private readonly ClientService _clientService;
-    private readonly ClientStorage _clientStorage;
+    private readonly IClientStorage _clientStorage;
 
     public ClientServiceTests()
     {
@@ -47,7 +48,7 @@ public class ClientServiceTests
         _clientService.AddClient(client);
 
         // Assert
-        Assert.Equal(1, _clientStorage.Count());
+        Assert.Single(_clientStorage.Get(c => true));
     }
 
     [Fact]
@@ -73,7 +74,7 @@ public class ClientServiceTests
         _clientService.AddAdditionalAccount(client, account);
 
         // Assert
-        var storedAccounts = _clientStorage.GetAccountsByClient(client);
+        var storedAccounts = _clientService.GetAccountsByClient(client);
         Assert.Contains(account, storedAccounts);
     }
 
@@ -103,7 +104,7 @@ public class ClientServiceTests
         _clientService.EditAccount(client, oldAccount, newAccount);
 
         // Assert
-        var storedAccounts = _clientStorage.GetAccountsByClient(client);
+        var storedAccounts = _clientService.GetAccountsByClient(client);
         Assert.Contains(newAccount, storedAccounts);
         Assert.DoesNotContain(oldAccount, storedAccounts);
     }
@@ -193,5 +194,55 @@ public class ClientServiceTests
         Assert.DoesNotContain(client2, clients);
     }
 
+    [Fact]
+    public void GetYoungestClient_ShouldThrowException_WhenNoClientsExist()
+    {
+        // Act & Assert
+        Assert.Throws<ClientValidationException>(() => _clientService.GetYoungestClient());
+    }
 
+    [Fact]
+    public void GetYoungestClient_ShouldReturnYoungestClient_WhenClientsExist()
+    {
+        // Arrange
+        var client1 = new Client { FirstName = "Иван", LastName = "Иванов", DateOfBirth = DateTime.Now.AddYears(-30), PassportNumber = "1234567890" };
+        var client2 = new Client { FirstName = "Мария", LastName = "Петрова", DateOfBirth = DateTime.Now.AddYears(-25), PassportNumber = "0987654321" };
+        var client3 = new Client { FirstName = "Алексей", LastName = "Сидоров", DateOfBirth = DateTime.Now.AddYears(-20), PassportNumber = "1122334455" };
+        _clientService.AddClient(client1);
+        _clientService.AddClient(client2);
+        _clientService.AddClient(client3);
+
+        // Act
+        var youngestClient = _clientService.GetYoungestClient();
+
+        // Assert
+        Assert.Equal(client3, youngestClient);
+    }
+
+    [Fact]
+    public void UpdateClient_ShouldThrowException_WhenClientDoesNotExist()
+    {
+        // Arrange
+        var client = new Client { FirstName = "Иван", LastName = "Иванов", DateOfBirth = DateTime.Now.AddYears(-20), PassportNumber = "1234567890" };
+
+        // Act & Assert
+        Assert.Throws<ClientValidationException>(() => _clientService.UpdateClient(client));
+    }
+
+    [Fact]
+    public void UpdateClient_ShouldUpdateClient_WhenClientExists()
+    {
+        // Arrange
+        var client = new Client { FirstName = "Иван", LastName = "Иванов", DateOfBirth = DateTime.Now.AddYears(-20), PassportNumber = "1234567890" };
+        _clientService.AddClient(client);
+
+        // Act
+        client.FirstName = "Алексей";
+        _clientService.UpdateClient(client);
+
+        // Assert
+        var updatedClient = _clientStorage.Get(c => c.PassportNumber == "1234567890").FirstOrDefault();
+        Assert.NotNull(updatedClient);
+        Assert.Equal("Алексей", updatedClient.FirstName);
+    }
 }

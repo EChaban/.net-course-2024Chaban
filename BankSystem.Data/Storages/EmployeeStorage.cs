@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using BankSystem.Domain.Models;
+using BankSystem.App.Interfaces;
 
 namespace BankSystem.Data.Storages
 {
-    public class EmployeeStorage
+    public class EmployeeStorage : IEmployeeStorage
     {
         private List<Employee> _employees = new List<Employee>();
 
-        public void AddEmployee(Employee employee)
+        public void Add(Employee employee)
         {
             _employees.Add(employee);
         }
@@ -24,16 +25,19 @@ namespace BankSystem.Data.Storages
             return _employees.Count;
         }
 
+        public List<Employee> Get(Func<Employee, bool> filter)
+        {
+            return _employees.Where(filter).ToList();
+        }
+
         public Employee? GetYoungestEmployee()
         {
-            if (_employees.Count == 0) return null;
-            return _employees.MaxBy(c => c.DateOfBirth);
+            return _employees.Count == 0 ? null : _employees.MaxBy(c => c.DateOfBirth);
         }
 
         public Employee? GetOldestEmployee()
         {
-            if (_employees.Count == 0) return null;
-            return _employees.MinBy(c => c.DateOfBirth);
+            return _employees.Count == 0 ? null : _employees.MinBy(c => c.DateOfBirth);
         }
 
         public int GetAverageAge()
@@ -45,23 +49,18 @@ namespace BankSystem.Data.Storages
             return totalAge / _employees.Count;
         }
 
-        public void EditEmployee(Employee oldEmployee, Employee newEmployee)
+        public void Update(Employee employee)
         {
-            var index = _employees.IndexOf(oldEmployee);
+            var index = _employees.FindIndex(e => e.PhoneNumber == employee.PhoneNumber);
             if (index != -1)
             {
-                _employees[index] = newEmployee;
+                _employees[index] = employee;
             }
         }
 
-        public IEnumerable<Employee> GetEmployees(string? fullName = null, string? phoneNumber = null, string? position = null, DateTime? dateOfBirthFrom = null, DateTime? dateOfBirthTo = null)
+        public void Delete(Employee employee)
         {
-            return _employees.Where(e =>
-                (string.IsNullOrEmpty(fullName) || $"{e.FirstName} {e.LastName}".Contains(fullName)) &&
-                (string.IsNullOrEmpty(phoneNumber) || e.PhoneNumber == phoneNumber) &&
-                (string.IsNullOrEmpty(position) || e.Position == position) &&
-                (!dateOfBirthFrom.HasValue || e.DateOfBirth >= dateOfBirthFrom.Value) &&
-                (!dateOfBirthTo.HasValue || e.DateOfBirth <= dateOfBirthTo.Value));
+            _employees.Remove(employee);
         }
     }
 }

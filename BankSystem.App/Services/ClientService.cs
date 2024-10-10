@@ -1,17 +1,14 @@
-﻿using BankSystem.Data.Storages;
+﻿using BankSystem.App.Exceptions;
+using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
-using BankSystem.App.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace BankSystem.App.Services
 {
     public class ClientService
     {
-        private readonly ClientStorage _clientStorage;
+        private readonly IClientStorage _clientStorage;
 
-        public ClientService(ClientStorage clientStorage)
+        public ClientService(IClientStorage clientStorage)
         {
             _clientStorage = clientStorage;
         }
@@ -25,28 +22,70 @@ namespace BankSystem.App.Services
                 throw new ClientValidationException("Client must have passport data.");
 
             var defaultAccount = new Account(new Currency("USD", '$'), 0);
-            _clientStorage.AddClient(client, new List<Account> { defaultAccount });
+            _clientStorage.Add(client);
+            _clientStorage.AddAccount(client, defaultAccount);
         }
 
         public void AddAdditionalAccount(Client client, Account account)
         {
-            if (!_clientStorage.ClientExists(client))
+            if (!_clientStorage.Get(c => c.Equals(client)).Any())
                 throw new ClientValidationException("Client does not exist.");
 
-            _clientStorage.AddAccountToClient(client, account);
+            _clientStorage.AddAccount(client, account);
         }
 
         public void EditAccount(Client client, Account oldAccount, Account newAccount)
         {
-            if (!_clientStorage.ClientExists(client))
+            if (!_clientStorage.Get(c => c.Equals(client)).Any())
                 throw new ClientValidationException("Client does not exist.");
 
-            _clientStorage.EditClientAccount(client, oldAccount, newAccount);
+            _clientStorage.UpdateAccount(client, oldAccount, newAccount);
         }
 
         public IEnumerable<Client> GetClients(string? fullName = null, string? phoneNumber = null, string? passportNumber = null, DateTime? dateOfBirthFrom = null, DateTime? dateOfBirthTo = null)
         {
-            return _clientStorage.GetClients(fullName, phoneNumber, passportNumber, dateOfBirthFrom, dateOfBirthTo);
+            return _clientStorage.Get(c =>
+                (string.IsNullOrEmpty(fullName) || $"{c.FirstName} {c.LastName}".Contains(fullName)) &&
+                (string.IsNullOrEmpty(phoneNumber) || c.PhoneNumber == phoneNumber) &&
+                (string.IsNullOrEmpty(passportNumber) || c.PassportNumber == passportNumber) &&
+                (!dateOfBirthFrom.HasValue || c.DateOfBirth >= dateOfBirthFrom.Value) &&
+                (!dateOfBirthTo.HasValue || c.DateOfBirth <= dateOfBirthTo.Value));
+        }
+
+        public IEnumerable<Account> GetAccountsByClient(Client client)
+        {
+            var clients = _clientStorage.Get(c => c.Equals(client));
+            if (!clients.Any())
+                throw new ClientValidationException("Client does not exist.");
+
+            return _clientStorage.GetAccounts(client);
+        }
+
+        public void UpdateClient(Client client)
+        {
+            if (!_clientStorage.Get(c => c.Equals(client)).Any())
+                throw new ClientValidationException("Client does not exist.");
+
+            _clientStorage.Update(client);
+        }
+
+        public IEnumerable<Client> GetClients(int pageNumber, int pageSize, out int totalClients)
+        {
+            var clients = _clientStorage.Get(c => true);
+            totalClients = clients.Count;
+            return clients
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
+        public Client GetYoungestClient()
+        {
+            var clients = _clientStorage.Get(c => true);
+            if (!clients.Any())
+                throw new ClientValidationException("No clients found.");
+
+            return clients.OrderByDescending(c => c.DateOfBirth).First();
         }
     }
 }

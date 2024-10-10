@@ -1,60 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using BankSystem.App.Exceptions;
+using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 
 namespace BankSystem.Data.Storages
 {
-    public class ClientStorage
+    public class ClientStorage : IClientStorage
     {
         private Dictionary<Client, List<Account>> _clients = new Dictionary<Client, List<Account>>();
 
-        public void AddClient(Client client, List<Account> accounts)
+        public List<Client> Get(Func<Client, bool> filter)
         {
-            _clients.Add(client, accounts);
+            return _clients.Keys.Where(filter).ToList();
         }
 
-        public void AddClientList(Dictionary<Client, List<Account>> accounts)
+        public void Add(Client client)
         {
-            foreach (var account in accounts)
+            _clients.Add(client, new List<Account>());
+        }
+
+        public void Update(Client client)
+        {
+            var existingClient = _clients.Keys.FirstOrDefault(c => c.PassportNumber == client.PassportNumber);
+            if (existingClient != null)
             {
-                _clients.Add(account.Key, account.Value);
+                var accounts = _clients[existingClient];
+                _clients.Remove(existingClient);
+                _clients.Add(client, accounts);
+            }
+            else
+            {
+                throw new ClientValidationException("Client does not exist.");
             }
         }
 
-        public int Count()
+        public void Delete(Client client)
         {
-            return _clients.Count;
+            _clients.Remove(client);
         }
 
-        public Client GetYoungestClient()
-        {
-            if (_clients.Count == 0) return null;
-            return _clients.Keys.MaxBy(c => c.DateOfBirth);
-        }
-
-        public Client GetOldestClient()
-        {
-            if (_clients.Count == 0) return null;
-            return _clients.Keys.MinBy(c => c.DateOfBirth);
-        }
-
-        public int GetAverageAge()
-        {
-            if (_clients.Count == 0) return 0;
-
-            int totalAge = _clients.Keys.Sum(c => UtilityMethods.CalculateAge(c.DateOfBirth));
-
-            return totalAge / _clients.Count;
-        }
-
-        public bool ClientExists(Client client)
-        {
-            return _clients.ContainsKey(client);
-        }
-
-        public void AddAccountToClient(Client client, Account account)
+        public void AddAccount(Client client, Account account)
         {
             if (_clients.ContainsKey(client))
             {
@@ -62,7 +46,7 @@ namespace BankSystem.Data.Storages
             }
         }
 
-        public void EditClientAccount(Client client, Account oldAccount, Account newAccount)
+        public void UpdateAccount(Client client, Account oldAccount, Account newAccount)
         {
             if (_clients.ContainsKey(client))
             {
@@ -75,23 +59,21 @@ namespace BankSystem.Data.Storages
             }
         }
 
-        public List<Account> GetAccountsByClient(Client client)
+        public void DeleteAccount(Client client, Account account)
         {
-            if (_clients.TryGetValue(client, out var accounts))
+            if (_clients.ContainsKey(client))
             {
-                return accounts;
+                _clients[client].Remove(account);
             }
-            return new List<Account>();
         }
 
-        public IEnumerable<Client> GetClients(string fullName = null, string phoneNumber = null, string passportNumber = null, DateTime? dateOfBirthFrom = null, DateTime? dateOfBirthTo = null)
+        public List<Account> GetAccounts(Client client)
         {
-            return _clients.Keys.Where(c =>
-                (string.IsNullOrEmpty(fullName) || $"{c.FirstName} {c.LastName}".Contains(fullName)) &&
-                (string.IsNullOrEmpty(phoneNumber) || c.PhoneNumber == phoneNumber) &&
-                (string.IsNullOrEmpty(passportNumber) || c.PassportNumber == passportNumber) &&
-                (!dateOfBirthFrom.HasValue || c.DateOfBirth >= dateOfBirthFrom.Value) &&
-                (!dateOfBirthTo.HasValue || c.DateOfBirth <= dateOfBirthTo.Value));
+            if (_clients.ContainsKey(client))
+            {
+                return _clients[client];
+            }
+            throw new ClientValidationException("Client does not exist.");
         }
     }
 }
