@@ -1,4 +1,4 @@
-﻿-- Выборка клиентов с суммой на счету ниже 2000, отсортированных по возрастанию суммы
+-- Выборка клиентов с суммой на счету ниже 2000, отсортированных по возрастанию суммы
 SELECT c.first_name, c.last_name, SUM(a.balance) AS total_balance
 FROM client c
 JOIN account a ON c.id = a.client_id
@@ -6,6 +6,7 @@ GROUP BY c.id
 HAVING SUM(a.balance) < 2000
 ORDER BY total_balance ASC;
 
+-- Поиск клиента с минимальной суммой на счете
 WITH min_balance AS (
     SELECT SUM(a.balance) AS total_balance
     FROM client c
@@ -49,4 +50,3 @@ ORDER BY age;
 SELECT *
 FROM client
 LIMIT 3;
-
